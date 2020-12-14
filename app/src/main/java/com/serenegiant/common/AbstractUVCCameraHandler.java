@@ -42,7 +42,7 @@ import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-abstract class AbstractUVCCameraHandler extends Handler {
+public abstract class AbstractUVCCameraHandler extends Handler {
     private static final int FILE_ERROR = -2;
     private static final int INVALID_DURATION = -1;
     private static final int MSG_CAPTURE_START = 5;
