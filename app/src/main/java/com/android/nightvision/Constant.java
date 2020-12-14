@@ -20,4 +20,10 @@ public class Constant {
         makeText.setGravity(80, 0, 0);
         makeText.show();
     }
+
+    public static void a(Context context, int i) {
+        Toast makeText = Toast.makeText(context, i, Toast.LENGTH_SHORT);
+        makeText.setGravity(80, 0, 0);
+        makeText.show();
+    }
 }

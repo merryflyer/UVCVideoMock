@@ -62,7 +62,7 @@ public class l extends DialogFragment implements OnSeekBarChangeListener, OnClic
     private TextView m;
     /* access modifiers changed from: private */
     public TextView n;
-    private b o;
+    private MBaseAdapter o;
     /* access modifiers changed from: private */
     public SharedPreferences p;
     /* access modifiers changed from: private */
@@ -92,7 +92,7 @@ public class l extends DialogFragment implements OnSeekBarChangeListener, OnClic
     }
 
     /* compiled from: SettingsDialogFragment */
-    private final class b extends BaseAdapter {
+    private final class MBaseAdapter extends BaseAdapter {
 
         /* renamed from: a reason: collision with root package name */
         private final LayoutInflater f101a;
@@ -100,7 +100,7 @@ public class l extends DialogFragment implements OnSeekBarChangeListener, OnClic
         /* renamed from: b reason: collision with root package name */
         private final List<Size> f102b;
 
-        b(Context context, List<Size> list) {
+        MBaseAdapter(Context context, List<Size> list) {
             this.f101a = LayoutInflater.from(context);
             if (list == null) {
                 list = new ArrayList<>();
@@ -158,7 +158,7 @@ public class l extends DialogFragment implements OnSeekBarChangeListener, OnClic
         Builder builder = new Builder(getActivity());
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.preview_list, null);
         ListView listView = (ListView) inflate.findViewById(R.id.preview_list);
-        this.o = new b(this.c, this.f99b.getSupportedPreviewSizes());
+        this.o = new MBaseAdapter(this.c, this.f99b.getSupportedPreviewSizes());
         listView.setAdapter(this.o);
         builder.setView(inflate);
         AlertDialog create = builder.create();
@@ -242,7 +242,7 @@ public class l extends DialogFragment implements OnSeekBarChangeListener, OnClic
             }
             switchR.setChecked(z);
         } else {
-            i.a(this.c, R.string.flash_low_battery_warning);
+            Constant.a(this.c, R.string.flash_low_battery_warning);
             this.j.setChecked(false);
             this.j.setEnabled(false);
         }
@@ -311,7 +311,7 @@ public class l extends DialogFragment implements OnSeekBarChangeListener, OnClic
 
     private void e() {
         if (this.f99b.isCameraOpened()) {
-            Toast.makeText(this.c, R.string.settings_reset_toast, 0).show();
+            Toast.makeText(this.c, R.string.settings_reset_toast, Toast.LENGTH_SHORT).show();
             this.h.setProgress(this.f99b.resetModelValue(-2147483647));
             this.i.setProgress(this.f99b.resetModelValue(-2147483646));
             this.j.setChecked(false);
@@ -353,10 +353,15 @@ public class l extends DialogFragment implements OnSeekBarChangeListener, OnClic
     }
 
     public void a() {
+//        MBaseAdapter MBaseAdapterVar = this.e;
+//        if (MBaseAdapterVar != null) {
+//            MBaseAdapterVar.a(false);
+//        } todo 重命名 导致的类错误
         b bVar = this.e;
         if (bVar != null) {
             bVar.a(false);
         }
+
         if (this.s) {
             this.c.unregisterReceiver(this.r);
             this.s = false;

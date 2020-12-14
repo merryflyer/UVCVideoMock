@@ -28,6 +28,9 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
+import com.b.a.b.BitmapCreator;
+import com.b.a.b.IOnThumbnailUpdateListener;
+import com.b.a.b.MThumbnailViewManager;
 import com.serenegiant.common.AbstractUVCCameraHandler;
 import com.serenegiant.common.PreviewRetry;
 import com.serenegiant.common.PreviewRetry.OnPreviewRetryListener;
@@ -42,7 +45,10 @@ import com.serenegiant.widget.UVCCameraTextureView;
 
 public class NightVisionActivity extends PermissionActivity implements OnClickListener, Callback,
         AbstractUVCCameraHandler.OnPreViewResultListener,
-        AbstractUVCCameraHandler.OnScanCompletedListener, OnPreviewRetryListener, b, OnRerecordListener {
+        AbstractUVCCameraHandler.OnScanCompletedListener,
+        OnPreviewRetryListener,
+        IOnThumbnailUpdateListener,
+        OnRerecordListener {
     /* access modifiers changed from: private */
     public static final String TAG = "NightVisionActivity";
     /* access modifiers changed from: private */
@@ -70,7 +76,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
     /* access modifiers changed from: private */
     public Handler mHandler = new Handler(new f(this));
     private ProgressDialog n;
-    private e o;
+    private MThumbnailViewManager mThumbnailViewManager;
     private Uri p;
     /* access modifiers changed from: private */
     public SharedPreferences q;
@@ -147,7 +153,8 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
             this.g = true;
         }
         if (this.f > 5) {
-            i.a(this, this.h ? R.string.usb_update_resolution_failed : R.string.usb_device_loading_failed);
+            Constant.a(this, this.h ? R.string.usb_update_resolution_failed :
+                    R.string.usb_device_loading_failed);
             finish();
             return;
         }
@@ -206,7 +213,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
             LogUtil.d(TAG, "night vision device removed");
             SharedPreferences sharedPreferences = this.q;
             if (sharedPreferences != null) {
-                sharedPreferences.edit().putBoolean(i.c, true).apply();
+                sharedPreferences.edit().putBoolean(Constant.c, true).apply();
             }
             this.mHandler.sendEmptyMessageDelayed(6, 500);
             return true;
@@ -249,11 +256,11 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
     public void onScanCompleted(Bitmap bitmap, Uri uri, String str, boolean z2) {
         Bitmap bitmap2;
         this.p = uri;
-        int c = this.o.c();
+        int c = this.mThumbnailViewManager.c();
         if (z2) {
-            bitmap2 = a.a(str, c);
+            bitmap2 = BitmapCreator.a(str, c);
         } else if (bitmap != null) {
-            Bitmap a2 = a.a(bitmap, c);
+            Bitmap a2 = BitmapCreator.a(bitmap, c);
             if (!bitmap.isRecycled()) {
                 bitmap.recycle();
             }
@@ -262,7 +269,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
             bitmap2 = null;
         }
         if (bitmap2 != null) {
-            this.o.a(bitmap2);
+            this.mThumbnailViewManager.a(bitmap2);
         }
     }
 
@@ -303,7 +310,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
         this.l.initOpenGL();
         this.k = UVCCameraHelper.getInstance();
         PreviewRetry.getInstance().setPreviewRetryListener(this);
-        this.o = new e(this, this);
+        this.mThumbnailViewManager = new MThumbnailViewManager(this, this);
         this.m = new l();
         this.m.a(this, this, this.k);
     }
@@ -348,7 +355,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
     /* access modifiers changed from: private */
     public void r() {
         LogUtil.d(TAG, "playCaptureAnimation +");
-        this.w.setVisibility(0);
+        this.w.setVisibility(View.VISIBLE);
         AnimatorSet animatorSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.cature_anim);
         animatorSet.setTarget(this.w);
         animatorSet.addListener(new e(this));
@@ -366,10 +373,10 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
                 this.k.setOnRerecordListener(null);
                 this.k.stopRecording();
                 a(false);
-                this.v.setVisibility(8);
+                this.v.setVisibility(View.GONE);
                 this.u.stop();
-                this.t.setVisibility(0);
-                this.o.a(false);
+                this.t.setVisibility(View.VISIBLE);
+                this.mThumbnailViewManager.a(false);
                 return;
             }
             LogUtil.d(TAG, "startRecording");
@@ -379,10 +386,10 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
             this.k.setOnRerecordListener(this);
             this.k.startRecording(i2);
             a(true);
-            this.v.setVisibility(0);
+            this.v.setVisibility(View.VISIBLE);
             this.u.setBase(SystemClock.elapsedRealtime());
-            this.t.setVisibility(4);
-            this.o.a(true);
+            this.t.setVisibility(View.INVISIBLE);
+            this.mThumbnailViewManager.a(true);
             this.u.start();
         }
     }
@@ -418,28 +425,28 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
     public void i() {
         super.i();
         SharedPreferences sharedPreferences = this.q;
-        if (sharedPreferences == null || !sharedPreferences.getBoolean(i.c, false)) {
+        if (sharedPreferences == null || !sharedPreferences.getBoolean(Constant.c, false)) {
             UsbDevice usbDevice = (UsbDevice) getIntent().getParcelableExtra("device");
             this.i = true;
             u();
             if (this.A) {
                 this.A = false;
                 this.s.setImageResource(R.drawable.ic_action_record_pause);
-                if (this.v.getVisibility() == 0) {
-                    this.v.setVisibility(8);
+                if (this.v.getVisibility() == View.VISIBLE) {
+                    this.v.setVisibility(View.GONE);
                     this.u.stop();
                 }
-                if (this.t.getVisibility() != 0) {
-                    this.t.setVisibility(0);
+                if (this.t.getVisibility() != View.VISIBLE) {
+                    this.t.setVisibility(View.VISIBLE);
                 }
             }
             q();
             v();
             this.g = true;
             this.h = false;
-            this.x.setVisibility(0);
+            this.x.setVisibility(View.VISIBLE);
             this.l.onResume();
-            this.o.d();
+            this.mThumbnailViewManager.d();
             synchronized (this.j) {
                 if (this.k != null) {
                     this.k.initUSBMonitor(this, this.l, this.D);
@@ -475,7 +482,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
         n();
         m();
         this.n = new ProgressDialog(this);
-        this.q = getSharedPreferences(i.f93b, 0);
+        this.q = getSharedPreferences(Constant.f93b, 0);
     }
 
     public void a(int i2, int i3) {
@@ -510,7 +517,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
         intent.putExtra("isUVCCamera", true);
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         if (VERSION.SDK_INT >= 23 && 2 == activityManager.getLockTaskModeState()) {
-            intent.addFlags(134742016);
+//            intent.addFlags(134742016); todo 不知道是什么值
         }
         try {
             startActivity(intent);
