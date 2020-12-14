@@ -8,12 +8,12 @@ import com.serenegiant.common.PreviewRetry;
 import com.serenegiant.usb.LogUtil;
 
 /* compiled from: NightVisionActivity */
-class f implements Callback {
+class MCallback implements Callback {
 
     /* renamed from: a reason: collision with root package name */
     final /* synthetic */ NightVisionActivity f88a;
 
-    f(NightVisionActivity nightVisionActivity) {
+    MCallback(NightVisionActivity nightVisionActivity) {
         this.f88a = nightVisionActivity;
     }
 

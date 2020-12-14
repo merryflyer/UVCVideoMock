@@ -74,7 +74,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
     public UVCCameraTextureView l;
     private l m;
     /* access modifiers changed from: private */
-    public Handler mHandler = new Handler(new f(this));
+    public Handler mHandler = new Handler(new MCallback(this));
     private ProgressDialog n;
     private MThumbnailViewManager mThumbnailViewManager;
     private Uri p;

@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import com.serenegiant.common.VideoFileSizeObserver.OnRerecordListener;
@@ -39,6 +40,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -288,27 +291,15 @@ public abstract class AbstractUVCCameraHandler extends Handler {
         /* JADX WARNING: Missing exception handler attribute for start block: B:7:0x0013 */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public com.serenegiant.common.AbstractUVCCameraHandler getHandler() {
-            /*
-                r2 = this;
-                java.lang.String r0 = "CameraThread"
-                java.lang.String r1 = "getHandler:"
-                com.serenegiant.usb.LogUtil.dv(r0, r1)
-                java.lang.Object r0 = r2.mSync
-                monitor-enter(r0)
-                com.serenegiant.common.AbstractUVCCameraHandler r1 = r2.mHandler     // Catch:{ all -> 0x0017 }
-                if (r1 != 0) goto L_0x0013
-                java.lang.Object r1 = r2.mSync     // Catch:{ InterruptedException -> 0x0013 }
-                r1.wait()     // Catch:{ InterruptedException -> 0x0013 }
-            L_0x0013:
-                monitor-exit(r0)     // Catch:{ all -> 0x0017 }
-                com.serenegiant.common.AbstractUVCCameraHandler r0 = r2.mHandler
-                return r0
-            L_0x0017:
-                r1 = move-exception
-                monitor-exit(r0)     // Catch:{ all -> 0x0017 }
-                throw r1
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.common.AbstractUVCCameraHandler.CameraThread.getHandler():com.serenegiant.common.AbstractUVCCameraHandler");
+            Log.v(TAG_THREAD, "getHandler:");
+            synchronized (mSync) {
+                if (mHandler == null)
+                    try {
+                        mSync.wait();
+                    } catch (final InterruptedException e) {
+                    }
+            }
+            return mHandler;
         }
 
         public int getHeight() {
@@ -491,77 +482,35 @@ public abstract class AbstractUVCCameraHandler extends Handler {
         /* JADX WARNING: Failed to process nested try/catch */
         /* JADX WARNING: Missing exception handler attribute for start block: B:6:0x0027 */
         /* Code decompiled incorrectly, please refer to instructions dump. */
-        public void handleStartPreview(java.lang.Object r11) {
-            /*
-                r10 = this;
-                java.lang.String r0 = "CameraThread"
-                java.lang.String r1 = "handleStartPreview:"
-                com.serenegiant.usb.LogUtil.dv(r0, r1)
-                com.serenegiant.usb.UVCCamera r2 = r10.mUVCCamera
-                if (r2 == 0) goto L_0x006a
-                boolean r0 = r10.mIsPreviewing
-                if (r0 == 0) goto L_0x0010
-                goto L_0x006a
-            L_0x0010:
-                int r3 = r10.mWidth     // Catch:{ IllegalArgumentException -> 0x0027 }
-                int r4 = r10.mHeight     // Catch:{ IllegalArgumentException -> 0x0027 }
-                r5 = 1
-                r6 = 30
-                int r7 = r10.mPreviewMode     // Catch:{ IllegalArgumentException -> 0x0027 }
-                float r8 = r10.mBandwidthFactor     // Catch:{ IllegalArgumentException -> 0x0027 }
-                r2.setPreviewSize(r3, r4, r5, r6, r7, r8)     // Catch:{ IllegalArgumentException -> 0x0027 }
-                com.serenegiant.usb.UVCCamera r0 = r10.mUVCCamera     // Catch:{ IllegalArgumentException -> 0x0027 }
-                com.serenegiant.usb.IFrameCallback r1 = r10.mPreviewFrameCallback     // Catch:{ IllegalArgumentException -> 0x0027 }
-                r2 = 5
-                r0.setFrameCallback(r1, r2)     // Catch:{ IllegalArgumentException -> 0x0027 }
-                goto L_0x0036
-            L_0x0027:
-                com.serenegiant.usb.UVCCamera r3 = r10.mUVCCamera     // Catch:{ IllegalArgumentException -> 0x006a }
-                int r4 = r10.mWidth     // Catch:{ IllegalArgumentException -> 0x006a }
-                int r5 = r10.mHeight     // Catch:{ IllegalArgumentException -> 0x006a }
-                r6 = 1
-                r7 = 30
-                r8 = 0
-                float r9 = r10.mBandwidthFactor     // Catch:{ IllegalArgumentException -> 0x006a }
-                r3.setPreviewSize(r4, r5, r6, r7, r8, r9)     // Catch:{ IllegalArgumentException -> 0x006a }
-            L_0x0036:
-                boolean r0 = r11 instanceof android.view.SurfaceHolder
-                if (r0 == 0) goto L_0x0042
-                com.serenegiant.usb.UVCCamera r0 = r10.mUVCCamera
-                android.view.SurfaceHolder r11 = (android.view.SurfaceHolder) r11
-                r0.setPreviewDisplay(r11)
-                goto L_0x0055
-            L_0x0042:
-                boolean r0 = r11 instanceof android.view.Surface
-                if (r0 == 0) goto L_0x004e
-                com.serenegiant.usb.UVCCamera r0 = r10.mUVCCamera
-                android.view.Surface r11 = (android.view.Surface) r11
-                r0.setPreviewDisplay(r11)
-                goto L_0x0055
-            L_0x004e:
-                com.serenegiant.usb.UVCCamera r0 = r10.mUVCCamera
-                android.graphics.SurfaceTexture r11 = (android.graphics.SurfaceTexture) r11
-                r0.setPreviewTexture(r11)
-            L_0x0055:
-                com.serenegiant.usb.UVCCamera r11 = r10.mUVCCamera
-                r11.startPreview()
-                com.serenegiant.usb.UVCCamera r11 = r10.mUVCCamera
-                r11.updateCameraParams()
-                java.lang.Object r11 = r10.mSync
-                monitor-enter(r11)
-                r0 = 1
-                r10.mIsPreviewing = r0     // Catch:{ all -> 0x0067 }
-                monitor-exit(r11)     // Catch:{ all -> 0x0067 }
-                return
-            L_0x0067:
-                r0 = move-exception
-                monitor-exit(r11)     // Catch:{ all -> 0x0067 }
-                throw r0
-            L_0x006a:
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.common.AbstractUVCCameraHandler.CameraThread.handleStartPreview(java.lang.Object):void");
+        public void handleStartPreview(final Object surface) {
+            Log.v(TAG_THREAD, "handleStartPreview:");
+            if ((mUVCCamera == null) || mIsPreviewing) return;
+            try {
+                mUVCCamera.setPreviewSize(mWidth, mHeight, 1, 31, mPreviewMode, mBandwidthFactor);
+            } catch (final IllegalArgumentException e) {
+                try {
+                    // fallback to YUV mode
+                    mUVCCamera.setPreviewSize(mWidth, mHeight, 1, 31, UVCCamera.DEFAULT_PREVIEW_MODE, mBandwidthFactor);
+                } catch (final IllegalArgumentException e1) {
+                    e1.printStackTrace();
+                    return;
+                }
+            }
+            if (surface instanceof SurfaceHolder) {
+                mUVCCamera.setPreviewDisplay((SurfaceHolder)surface);
+            } if (surface instanceof Surface) {
+                mUVCCamera.setPreviewDisplay((Surface)surface);
+            } else {
+                mUVCCamera.setPreviewTexture((SurfaceTexture)surface);
+            }
+            mUVCCamera.startPreview();
+            mUVCCamera.updateCameraParams();
+            synchronized (mSync) {
+                mIsPreviewing = true;
+            }
+//            callOnStartPreview();  todo 赵磊屏蔽，找不到源代码
         }
+
 
         public void handleStartRecording(int i) {
             StringBuilder sb = new StringBuilder();
@@ -727,74 +676,40 @@ public abstract class AbstractUVCCameraHandler extends Handler {
         /* JADX WARNING: Removed duplicated region for block: B:27:0x0057 A[SYNTHETIC] */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
-            /*
-                r6 = this;
-                android.os.Looper.prepare()
-                r0 = 0
-                r1 = 1
-                java.lang.Class<? extends com.serenegiant.common.AbstractUVCCameraHandler> r2 = r6.mHandlerClass     // Catch:{ NoSuchMethodException -> 0x0032, IllegalAccessException -> 0x002b, InstantiationException -> 0x0024, InvocationTargetException -> 0x001d }
-                java.lang.Class[] r3 = new java.lang.Class[r1]     // Catch:{ NoSuchMethodException -> 0x0032, IllegalAccessException -> 0x002b, InstantiationException -> 0x0024, InvocationTargetException -> 0x001d }
-                java.lang.Class<com.serenegiant.common.AbstractUVCCameraHandler$CameraThread> r4 = com.serenegiant.common.AbstractUVCCameraHandler.CameraThread.class
-                r5 = 0
-                r3[r5] = r4     // Catch:{ NoSuchMethodException -> 0x0032, IllegalAccessException -> 0x002b, InstantiationException -> 0x0024, InvocationTargetException -> 0x001d }
-                java.lang.reflect.Constructor r2 = r2.getDeclaredConstructor(r3)     // Catch:{ NoSuchMethodException -> 0x0032, IllegalAccessException -> 0x002b, InstantiationException -> 0x0024, InvocationTargetException -> 0x001d }
-                java.lang.Object[] r3 = new java.lang.Object[r1]     // Catch:{ NoSuchMethodException -> 0x0032, IllegalAccessException -> 0x002b, InstantiationException -> 0x0024, InvocationTargetException -> 0x001d }
-                r3[r5] = r6     // Catch:{ NoSuchMethodException -> 0x0032, IllegalAccessException -> 0x002b, InstantiationException -> 0x0024, InvocationTargetException -> 0x001d }
-                java.lang.Object r2 = r2.newInstance(r3)     // Catch:{ NoSuchMethodException -> 0x0032, IllegalAccessException -> 0x002b, InstantiationException -> 0x0024, InvocationTargetException -> 0x001d }
-                com.serenegiant.common.AbstractUVCCameraHandler r2 = (com.serenegiant.common.AbstractUVCCameraHandler) r2     // Catch:{ NoSuchMethodException -> 0x0032, IllegalAccessException -> 0x002b, InstantiationException -> 0x0024, InvocationTargetException -> 0x001d }
-                goto L_0x0039
-            L_0x001d:
-                r2 = move-exception
-                java.lang.String r3 = "UVCCameraHandler"
-                android.util.Log.w(r3, r2)
-                goto L_0x0038
-            L_0x0024:
-                r2 = move-exception
-                java.lang.String r3 = "UVCCameraHandler"
-                android.util.Log.w(r3, r2)
-                goto L_0x0038
-            L_0x002b:
-                r2 = move-exception
-                java.lang.String r3 = "UVCCameraHandler"
-                android.util.Log.w(r3, r2)
-                goto L_0x0038
-            L_0x0032:
-                r2 = move-exception
-                java.lang.String r3 = "UVCCameraHandler"
-                android.util.Log.w(r3, r2)
-            L_0x0038:
-                r2 = r0
-            L_0x0039:
-                if (r2 == 0) goto L_0x0054
-                java.lang.Object r3 = r6.mSync
-                monitor-enter(r3)
-                r6.mHandler = r2     // Catch:{ all -> 0x0051 }
-                java.lang.Object r2 = r6.mSync     // Catch:{ all -> 0x0051 }
-                r2.notifyAll()     // Catch:{ all -> 0x0051 }
-                monitor-exit(r3)     // Catch:{ all -> 0x0051 }
-                android.os.Looper.loop()
-                com.serenegiant.common.AbstractUVCCameraHandler r2 = r6.mHandler
-                if (r2 == 0) goto L_0x0054
-                r2.mReleased = r1
-                goto L_0x0054
-            L_0x0051:
-                r0 = move-exception
-                monitor-exit(r3)     // Catch:{ all -> 0x0051 }
-                throw r0
-            L_0x0054:
-                java.lang.Object r1 = r6.mSync
-                monitor-enter(r1)
-                r6.mHandler = r0     // Catch:{ all -> 0x0060 }
-                java.lang.Object r0 = r6.mSync     // Catch:{ all -> 0x0060 }
-                r0.notifyAll()     // Catch:{ all -> 0x0060 }
-                monitor-exit(r1)     // Catch:{ all -> 0x0060 }
-                return
-            L_0x0060:
-                r0 = move-exception
-                monitor-exit(r1)     // Catch:{ all -> 0x0060 }
-                throw r0
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.common.AbstractUVCCameraHandler.CameraThread.run():void");
+
+            Looper.prepare();
+            AbstractUVCCameraHandler handler = null;
+            try {
+                final Constructor<? extends AbstractUVCCameraHandler> constructor = mHandlerClass.getDeclaredConstructor(CameraThread.class);
+                handler = constructor.newInstance(this);
+            } catch (final NoSuchMethodException e) {
+                Log.w(TAG, e);
+            } catch (final IllegalAccessException e) {
+                Log.w(TAG, e);
+            } catch (final InstantiationException e) {
+                Log.w(TAG, e);
+            } catch (final InvocationTargetException e) {
+                Log.w(TAG, e);
+            }
+            if (handler != null) {
+                synchronized (mSync) {
+                    mHandler = handler;
+                    mSync.notifyAll();
+                }
+                Looper.loop();
+//                if (mSoundPool != null) {
+//                    mSoundPool.release();
+//                    mSoundPool = null;
+//                }
+                if (mHandler != null) {
+                    mHandler.mReleased = true;
+                }
+            }
+//            mCallbacks.clear();
+            synchronized (mSync) {
+                mHandler = null;
+                mSync.notifyAll();
+            }
         }
     }
 
@@ -1090,61 +1005,26 @@ public abstract class AbstractUVCCameraHandler extends Handler {
     /* JADX WARNING: Missing exception handler attribute for start block: B:18:0x0057 */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void stopPreview() {
-        /*
-            r4 = this;
-            java.lang.String r0 = "UVCCameraHandler"
-            java.lang.String r1 = "stopPreview:"
-            com.serenegiant.usb.LogUtil.dv(r0, r1)
-            r0 = 2
-            r4.removeMessages(r0)
-            r4.stopRecording()
-            boolean r0 = r4.isPreviewing()
-            if (r0 == 0) goto L_0x005c
-            java.lang.ref.WeakReference<com.serenegiant.common.AbstractUVCCameraHandler$CameraThread> r0 = r4.mWeakThread
-            java.lang.Object r0 = r0.get()
-            com.serenegiant.common.AbstractUVCCameraHandler$CameraThread r0 = (com.serenegiant.common.AbstractUVCCameraHandler.CameraThread) r0
-            java.lang.StringBuilder r1 = new java.lang.StringBuilder
-            r1.<init>()
-            java.lang.String r2 = "stopPreview: thread = "
-            r1.append(r2)
-            if (r0 != 0) goto L_0x002a
-            r2 = 1
-            goto L_0x002b
-        L_0x002a:
-            r2 = 0
-        L_0x002b:
-            r1.append(r2)
-            java.lang.String r1 = r1.toString()
-            java.lang.String r2 = "UVCCameraHandler"
-            com.serenegiant.usb.LogUtil.dv(r2, r1)
-            if (r0 != 0) goto L_0x003a
-            return
-        L_0x003a:
-            java.lang.Object r1 = r0.mSync
-            monitor-enter(r1)
-            r2 = 3
-            r4.sendEmptyMessage(r2)     // Catch:{ all -> 0x0059 }
-            boolean r2 = r4.isCameraThread()     // Catch:{ all -> 0x0059 }
-            if (r2 != 0) goto L_0x0057
-            java.lang.String r2 = "UVCCameraHandler"
-            java.lang.String r3 = "stopPreview: sync wait preview stopped"
-            com.serenegiant.usb.LogUtil.dv(r2, r3)     // Catch:{ all -> 0x0059 }
-            java.lang.Object r0 = r0.mSync     // Catch:{ InterruptedException -> 0x0057 }
-            r0.wait()     // Catch:{ InterruptedException -> 0x0057 }
-        L_0x0057:
-            monitor-exit(r1)     // Catch:{ all -> 0x0059 }
-            goto L_0x005c
-        L_0x0059:
-            r0 = move-exception
-            monitor-exit(r1)     // Catch:{ all -> 0x0059 }
-            throw r0
-        L_0x005c:
-            java.lang.String r0 = "UVCCameraHandler"
-            java.lang.String r1 = "stopPreview:finished"
-            com.serenegiant.usb.LogUtil.dv(r0, r1)
-            return
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.common.AbstractUVCCameraHandler.stopPreview():void");
+       Log.v(TAG, "stopPreview:");
+        removeMessages(MSG_PREVIEW_START);
+        stopRecording();
+        if (isPreviewing()) {
+            final CameraThread thread = mWeakThread.get();
+            if (thread == null) return;
+            synchronized (thread.mSync) {
+                sendEmptyMessage(MSG_PREVIEW_STOP);
+                if (!isCameraThread()) {
+                    // wait for actually preview stopped to avoid releasing Surface/SurfaceTexture
+                    // while preview is still running.
+                    // therefore this method will take a time to execute
+                    try {
+                        thread.mSync.wait();
+                    } catch (final InterruptedException e) {
+                    }
+                }
+            }
+        }
+       Log.v(TAG, "stopPreview:finished");
     }
 
     public void stopRecording() {

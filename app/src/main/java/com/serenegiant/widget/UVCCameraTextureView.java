@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView.SurfaceTextureListener;
 
@@ -130,27 +131,16 @@ public class UVCCameraTextureView extends AspectRatioTextureView implements Surf
             /* JADX WARNING: Missing exception handler attribute for start block: B:7:0x0013 */
             /* Code decompiled incorrectly, please refer to instructions dump. */
             public final com.serenegiant.widget.UVCCameraTextureView.RenderHandler getHandler() {
-                /*
-                    r2 = this;
-                    java.lang.String r0 = "UVCCameraTextureView"
-                    java.lang.String r1 = "RenderThread#getHandler:"
-                    com.serenegiant.usb.LogUtil.dv(r0, r1)
-                    java.lang.Object r0 = r2.mSync
-                    monitor-enter(r0)
-                    com.serenegiant.widget.UVCCameraTextureView$RenderHandler r1 = r2.mHandler     // Catch:{ all -> 0x0017 }
-                    if (r1 != 0) goto L_0x0013
-                    java.lang.Object r1 = r2.mSync     // Catch:{ InterruptedException -> 0x0013 }
-                    r1.wait()     // Catch:{ InterruptedException -> 0x0013 }
-                L_0x0013:
-                    monitor-exit(r0)     // Catch:{ all -> 0x0017 }
-                    com.serenegiant.widget.UVCCameraTextureView$RenderHandler r0 = r2.mHandler
-                    return r0
-                L_0x0017:
-                    r1 = move-exception
-                    monitor-exit(r0)     // Catch:{ all -> 0x0017 }
-                    throw r1
-                */
-                throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.widget.UVCCameraTextureView.RenderHandler.RenderThread.getHandler():com.serenegiant.widget.UVCCameraTextureView$RenderHandler");
+                Log.v(TAG, "RenderThread#getHandler:");
+                synchronized (mSync) {
+                    // create rendering thread
+                    if (mHandler == null)
+                        try {
+                            mSync.wait();
+                        } catch (final InterruptedException e) {
+                        }
+                }
+                return mHandler;
             }
 
             public final void onDrawFrame() {
@@ -256,35 +246,19 @@ public class UVCCameraTextureView extends AspectRatioTextureView implements Surf
         /* JADX WARNING: Missing exception handler attribute for start block: B:9:0x001f */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public final android.graphics.SurfaceTexture getPreviewTexture() {
-            /*
-                r2 = this;
-                java.lang.String r0 = "UVCCameraTextureView"
-                java.lang.String r1 = "getPreviewTexture:"
-                com.serenegiant.usb.LogUtil.dv(r0, r1)
-                boolean r0 = r2.mIsActive
-                if (r0 == 0) goto L_0x002a
-                com.serenegiant.widget.UVCCameraTextureView$RenderHandler$RenderThread r0 = r2.mThread
-                java.lang.Object r0 = r0.mSync
-                monitor-enter(r0)
-                r1 = 3
-                r2.sendEmptyMessage(r1)     // Catch:{ all -> 0x0027 }
-                com.serenegiant.widget.UVCCameraTextureView$RenderHandler$RenderThread r1 = r2.mThread     // Catch:{ InterruptedException -> 0x001f }
-                java.lang.Object r1 = r1.mSync     // Catch:{ InterruptedException -> 0x001f }
-                r1.wait()     // Catch:{ InterruptedException -> 0x001f }
-            L_0x001f:
-                com.serenegiant.widget.UVCCameraTextureView$RenderHandler$RenderThread r1 = r2.mThread     // Catch:{ all -> 0x0027 }
-                android.graphics.SurfaceTexture r1 = r1.mPreviewSurface     // Catch:{ all -> 0x0027 }
-                monitor-exit(r0)     // Catch:{ all -> 0x0027 }
-                return r1
-            L_0x0027:
-                r1 = move-exception
-                monitor-exit(r0)     // Catch:{ all -> 0x0027 }
-                throw r1
-            L_0x002a:
-                r0 = 0
-                return r0
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.widget.UVCCameraTextureView.RenderHandler.getPreviewTexture():android.graphics.SurfaceTexture");
+             Log.v(TAG, "getPreviewTexture:");
+            if (mIsActive) {
+                synchronized (mThread.mSync) {
+                    sendEmptyMessage(MSG_CREATE_SURFACE);
+                    try {
+                        mThread.mSync.wait();
+                    } catch (final InterruptedException e) {
+                    }
+                    return mThread.mPreviewSurface;
+                }
+            } else {
+                return null;
+            }
         }
 
         public final void handleMessage(Message message) {
@@ -338,34 +312,17 @@ public class UVCCameraTextureView extends AspectRatioTextureView implements Surf
         /* JADX WARNING: Can't wrap try/catch for region: R(7:4|5|6|7|8|9|10) */
         /* JADX WARNING: Missing exception handler attribute for start block: B:9:0x0023 */
         /* Code decompiled incorrectly, please refer to instructions dump. */
-        public void resize(int r3, int r4) {
-            /*
-                r2 = this;
-                java.lang.String r0 = "UVCCameraTextureView"
-                java.lang.String r1 = "resize:"
-                com.serenegiant.usb.LogUtil.dv(r0, r1)
-                boolean r0 = r2.mIsActive
-                if (r0 == 0) goto L_0x0028
-                com.serenegiant.widget.UVCCameraTextureView$RenderHandler$RenderThread r0 = r2.mThread
-                java.lang.Object r0 = r0.mSync
-                monitor-enter(r0)
-                r1 = 4
-                android.os.Message r3 = r2.obtainMessage(r1, r3, r4)     // Catch:{ all -> 0x0025 }
-                r2.sendMessage(r3)     // Catch:{ all -> 0x0025 }
-                com.serenegiant.widget.UVCCameraTextureView$RenderHandler$RenderThread r3 = r2.mThread     // Catch:{ InterruptedException -> 0x0023 }
-                java.lang.Object r3 = r3.mSync     // Catch:{ InterruptedException -> 0x0023 }
-                r3.wait()     // Catch:{ InterruptedException -> 0x0023 }
-            L_0x0023:
-                monitor-exit(r0)     // Catch:{ all -> 0x0025 }
-                goto L_0x0028
-            L_0x0025:
-                r3 = move-exception
-                monitor-exit(r0)     // Catch:{ all -> 0x0025 }
-                throw r3
-            L_0x0028:
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.widget.UVCCameraTextureView.RenderHandler.resize(int, int):void");
+        public void  resize(final int width, final int height) {
+            Log.v(TAG, "resize:");
+            if (mIsActive) {
+                synchronized (mThread.mSync) {
+                    sendMessage(obtainMessage(MSG_RESIZE, width, height));
+                    try {
+                        mThread.mSync.wait();
+                    } catch (final InterruptedException e) {
+                    }
+                }
+            }
         }
 
         public final void setVideoEncoder(IVideoEncoder iVideoEncoder) {
