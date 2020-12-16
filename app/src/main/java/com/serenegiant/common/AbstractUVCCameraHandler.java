@@ -407,76 +407,24 @@ public abstract class AbstractUVCCameraHandler extends Handler {
         /* JADX WARNING: Failed to process nested try/catch */
         /* JADX WARNING: Missing exception handler attribute for start block: B:6:0x0025 */
         /* Code decompiled incorrectly, please refer to instructions dump. */
-        public void handleSetPreviewSize(java.lang.Object r11, int r12, int r13) {
-            /*
-                r10 = this;
-                java.lang.String r0 = "CameraThread"
-                java.lang.String r1 = "handleSetPreviewSize:"
-                com.serenegiant.usb.LogUtil.dv(r0, r1)
-                r10.mWidth = r12
-                r10.mHeight = r13
-                com.serenegiant.usb.UVCCamera r2 = r10.mUVCCamera
-                if (r2 != 0) goto L_0x0010
-                return
-            L_0x0010:
-                r5 = 1
-                r6 = 30
-                int r7 = r10.mPreviewMode     // Catch:{ IllegalArgumentException -> 0x0025 }
-                float r8 = r10.mBandwidthFactor     // Catch:{ IllegalArgumentException -> 0x0025 }
-                r3 = r12
-                r4 = r13
-                r2.setPreviewSize(r3, r4, r5, r6, r7, r8)     // Catch:{ IllegalArgumentException -> 0x0025 }
-                com.serenegiant.usb.UVCCamera r0 = r10.mUVCCamera     // Catch:{ IllegalArgumentException -> 0x0025 }
-                com.serenegiant.usb.IFrameCallback r1 = r10.mPreviewFrameCallback     // Catch:{ IllegalArgumentException -> 0x0025 }
-                r2 = 5
-                r0.setFrameCallback(r1, r2)     // Catch:{ IllegalArgumentException -> 0x0025 }
-                goto L_0x0032
-            L_0x0025:
-                com.serenegiant.usb.UVCCamera r3 = r10.mUVCCamera     // Catch:{ IllegalArgumentException -> 0x0066 }
-                r6 = 1
-                r7 = 30
-                r8 = 0
-                float r9 = r10.mBandwidthFactor     // Catch:{ IllegalArgumentException -> 0x0066 }
-                r4 = r12
-                r5 = r13
-                r3.setPreviewSize(r4, r5, r6, r7, r8, r9)     // Catch:{ IllegalArgumentException -> 0x0066 }
-            L_0x0032:
-                boolean r12 = r11 instanceof android.view.SurfaceHolder
-                if (r12 == 0) goto L_0x003e
-                com.serenegiant.usb.UVCCamera r12 = r10.mUVCCamera
-                android.view.SurfaceHolder r11 = (android.view.SurfaceHolder) r11
-                r12.setPreviewDisplay(r11)
-                goto L_0x0051
-            L_0x003e:
-                boolean r12 = r11 instanceof android.view.Surface
-                if (r12 == 0) goto L_0x004a
-                com.serenegiant.usb.UVCCamera r12 = r10.mUVCCamera
-                android.view.Surface r11 = (android.view.Surface) r11
-                r12.setPreviewDisplay(r11)
-                goto L_0x0051
-            L_0x004a:
-                com.serenegiant.usb.UVCCamera r12 = r10.mUVCCamera
-                android.graphics.SurfaceTexture r11 = (android.graphics.SurfaceTexture) r11
-                r12.setPreviewTexture(r11)
-            L_0x0051:
-                com.serenegiant.usb.UVCCamera r11 = r10.mUVCCamera
-                r11.startPreview()
-                com.serenegiant.usb.UVCCamera r11 = r10.mUVCCamera
-                r11.updateCameraParams()
-                java.lang.Object r11 = r10.mSync
-                monitor-enter(r11)
-                r12 = 1
-                r10.mIsPreviewing = r12     // Catch:{ all -> 0x0063 }
-                monitor-exit(r11)     // Catch:{ all -> 0x0063 }
-                return
-            L_0x0063:
-                r12 = move-exception
-                monitor-exit(r11)     // Catch:{ all -> 0x0063 }
-                throw r12
-            L_0x0066:
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.common.AbstractUVCCameraHandler.CameraThread.handleSetPreviewSize(java.lang.Object, int, int):void");
+        public void handleSetPreviewSize(java.lang.Object p0, int p1, int p2) {
+
+            UVCCamera _VCCamera;
+            Object mSync;
+            int vi1;
+            LogUtil.dv("CameraThread", "handleSetPreviewSize:");
+            this.mWidth = p1;
+            this.mHeight = p2;
+            if (null ==  this.mUVCCamera){ //todo zhaolei change
+                return;
+            }
+            try{
+                int vi = 30;
+                mUVCCamera.setPreviewSize(p1, p2, 1, vi, this.mPreviewMode, this.mBandwidthFactor);
+                this.mUVCCamera.setFrameCallback(this.mPreviewFrameCallback, 5);
+            }catch(java.lang.IllegalArgumentException e1){
+                this.mUVCCamera.setPreviewSize(p1, p2, 1, 30, 0, this.mBandwidthFactor);
+            }
         }
 
         /* JADX WARNING: Failed to process nested try/catch */
@@ -486,11 +434,11 @@ public abstract class AbstractUVCCameraHandler extends Handler {
             Log.v(TAG_THREAD, "handleStartPreview:");
             if ((mUVCCamera == null) || mIsPreviewing) return;
             try {
-                mUVCCamera.setPreviewSize(mWidth, mHeight, 1, 31, mPreviewMode, mBandwidthFactor);
+                mUVCCamera.setPreviewSize(mWidth, mHeight, 1, 30, mPreviewMode, mBandwidthFactor);
             } catch (final IllegalArgumentException e) {
                 try {
                     // fallback to YUV mode
-                    mUVCCamera.setPreviewSize(mWidth, mHeight, 1, 31, UVCCamera.DEFAULT_PREVIEW_MODE, mBandwidthFactor);
+                    mUVCCamera.setPreviewSize(mWidth, mHeight, 1, 30, UVCCamera.DEFAULT_PREVIEW_MODE, mBandwidthFactor);
                 } catch (final IllegalArgumentException e1) {
                     e1.printStackTrace();
                     return;

@@ -25,59 +25,41 @@ class MediaActionSoundPlayer {
         return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
-    public synchronized void play(int r4) {
-        /*
-            r3 = this;
-            monitor-enter(r3)
-            android.media.MediaActionSound r0 = r3.mSound     // Catch:{ all -> 0x004a }
-            if (r0 != 0) goto L_0x000e
-            java.lang.String r4 = TAG     // Catch:{ all -> 0x004a }
-            java.lang.String r0 = "[play] mSound is null"
-            com.serenegiant.usb.LogUtil.e(r4, r0)     // Catch:{ all -> 0x004a }
-            monitor-exit(r3)
-            return
-        L_0x000e:
-            r0 = 1
-            if (r4 == 0) goto L_0x0043
-            r1 = 2
-            if (r4 == r0) goto L_0x003d
-            r0 = 3
-            if (r4 == r1) goto L_0x0037
-            if (r4 == r0) goto L_0x0030
-            java.lang.String r0 = TAG     // Catch:{ all -> 0x004a }
-            java.lang.StringBuilder r1 = new java.lang.StringBuilder     // Catch:{ all -> 0x004a }
-            r1.<init>()     // Catch:{ all -> 0x004a }
-            java.lang.String r2 = "Unrecognized action:"
-            r1.append(r2)     // Catch:{ all -> 0x004a }
-            r1.append(r4)     // Catch:{ all -> 0x004a }
-            java.lang.String r4 = r1.toString()     // Catch:{ all -> 0x004a }
-            com.serenegiant.usb.LogUtil.w(r0, r4)     // Catch:{ all -> 0x004a }
-            goto L_0x0048
-        L_0x0030:
-            android.media.MediaActionSound r4 = r3.mSound     // Catch:{ all -> 0x004a }
-            r0 = 0
-            r4.play(r0)     // Catch:{ all -> 0x004a }
-            goto L_0x0048
-        L_0x0037:
-            android.media.MediaActionSound r4 = r3.mSound     // Catch:{ all -> 0x004a }
-            r4.play(r0)     // Catch:{ all -> 0x004a }
-            goto L_0x0048
-        L_0x003d:
-            android.media.MediaActionSound r4 = r3.mSound     // Catch:{ all -> 0x004a }
-            r4.play(r1)     // Catch:{ all -> 0x004a }
-            goto L_0x0048
-        L_0x0043:
-            android.media.MediaActionSound r4 = r3.mSound     // Catch:{ all -> 0x004a }
-            r4.play(r0)     // Catch:{ all -> 0x004a }
-        L_0x0048:
-            monitor-exit(r3)
-            return
-        L_0x004a:
-            r4 = move-exception
-            monitor-exit(r3)
-            throw r4
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.common.MediaActionSoundPlayer.play(int):void");
+    public synchronized void play(int p0) {
+
+        try{
+
+            synchronized (this) {
+                if (null != this.mSound) {
+                    LogUtil.e(MediaActionSoundPlayer.TAG, "[play] mSound is null");
+                    return;
+                }else {
+                    int vi = 1;
+                    if (p0 >0) {
+                        int vi1 = 2;
+                        if (p0 != vi) {
+                            int str = 3;
+                            if (p0 != vi1) {
+                                if (p0 != str) {
+                                    LogUtil.w(MediaActionSoundPlayer.TAG, new StringBuilder().append("Unrecognized action:").append(p0).toString());
+                                }else {
+                                    this.mSound.play(0);
+                                }
+                            }else {
+                                this.mSound.play(str);
+                            }
+                        }else {
+                            this.mSound.play(vi1);
+                        }
+                    }else {
+                        this.mSound.play(vi);
+                    }
+                    return;
+                }
+            }
+        }catch(Exception e4){
+            throw e4;
+        }
     }
 
     /* access modifiers changed from: protected */

@@ -1,5 +1,6 @@
 package com.serenegiant.encoder;
 
+import android.media.AudioRecord;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
@@ -8,6 +9,8 @@ import com.serenegiant.encoder.MediaEncoder.MediaEncoderListener;
 import com.serenegiant.usb.LogUtil;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class MediaAudioEncoder extends MediaEncoder implements IAudioEncoder {
     /* access modifiers changed from: private */
@@ -196,6 +199,7 @@ public class MediaAudioEncoder extends MediaEncoder implements IAudioEncoder {
             throw new UnsupportedOperationException("Method not decompiled: com.serenegiant.encoder.MediaAudioEncoder.AudioThread.run():void");
         }
     }
+
 
     public MediaAudioEncoder(MediaMuxerWrapper mediaMuxerWrapper, MediaEncoderListener mediaEncoderListener) {
         super(mediaMuxerWrapper, mediaEncoderListener);
