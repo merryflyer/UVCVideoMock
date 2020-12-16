@@ -14,6 +14,7 @@ import android.hardware.usb.UsbDevice;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -31,21 +32,24 @@ import androidx.annotation.Nullable;
 import com.b.a.b.BitmapCreator;
 import com.b.a.b.IOnThumbnailUpdateListener;
 import com.b.a.b.MThumbnailViewManager;
-import com.serenegiant.common.AbstractUVCCameraHandler;
 import com.serenegiant.common.PreviewRetry;
 import com.serenegiant.common.PreviewRetry.OnPreviewRetryListener;
 import com.serenegiant.common.UVCCameraHelper;
 import com.serenegiant.common.UVCCameraHelper.OnMyDevConnectListener;
-import com.serenegiant.common.VideoFileSizeObserver.OnRerecordListener;
+import com.serenegiant.widget.VideoFileSizeObserver.OnRerecordListener;
+import com.serenegiant.encoder.MediaMuxerWrapper;
 import com.serenegiant.usb.LogUtil;
 import com.serenegiant.usb.UVCCamera;
+import com.serenegiant.usbcameracommon.AbstractUVCCameraHandler;
 import com.serenegiant.widget.CameraViewInterface;
 import com.serenegiant.widget.CameraViewInterface.Callback;
 import com.serenegiant.widget.UVCCameraTextureView;
 
+import java.io.File;
+
 public class NightVisionActivity extends PermissionActivity implements OnClickListener, Callback,
-        AbstractUVCCameraHandler.OnPreViewResultListener,
-        AbstractUVCCameraHandler.OnScanCompletedListener,
+        AbstractUVCCameraHandler.CameraThread.OnPreViewResultListener,
+        AbstractUVCCameraHandler.CameraThread.OnScanCompletedListener,
         OnPreviewRetryListener,
         IOnThumbnailUpdateListener,
         OnRerecordListener {
@@ -81,7 +85,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
     /* access modifiers changed from: private */
     public SharedPreferences q;
     /* access modifiers changed from: private */
-    public int r = -1;
+    public String r_UnKnow = "";
     private ImageButton s;
     private ImageButton t;
     private Chronometer u;
@@ -185,7 +189,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
                 }
             } else if (this.k.isCameraOpened() && this.k.isPreviewing()) {
                 r();
-                this.k.capturePicture(this.r);
+                this.k.capturePicture(this.r_UnKnow);
             }
         }
     }
@@ -204,7 +208,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
         } else if (i2 == 25 || i2 == 27 || i2 == 133) {
             if (this.k.isCameraOpened() && this.k.isPreviewing() && !o()) {
                 r();
-                this.k.capturePicture(this.r);
+                this.k.capturePicture(this.r_UnKnow);
             }
             return true;
         } else if (i2 != 136) {
@@ -380,7 +384,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
                 return;
             }
             LogUtil.d(TAG, "startRecording");
-            int i2 = this.r;
+            String i2 = this.r_UnKnow;
             this.A = true;
             this.s.setImageResource(R.drawable.ic_action_record_start);
             this.k.setOnRerecordListener(this);
@@ -479,6 +483,8 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
         super.b(bundle);
         setContentView((int) R.layout.activity_main_common);
         this.z = true;
+        final File outputFile = MediaMuxerWrapper.getCaptureFile(Environment.DIRECTORY_DCIM, ".png");
+        r_UnKnow = outputFile.toString();
         n();
         m();
         this.n = new ProgressDialog(this);

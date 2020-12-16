@@ -5,16 +5,14 @@ import android.content.SharedPreferences;
 import android.graphics.SurfaceTexture;
 import android.hardware.usb.UsbDevice;
 import com.android.nightvision.R;
-import com.serenegiant.common.AbstractUVCCameraHandler.OnPreViewResultListener;
-import com.serenegiant.common.AbstractUVCCameraHandler.OnScanCompletedListener;
-import com.serenegiant.common.VideoFileSizeObserver.OnRerecordListener;
 import com.serenegiant.usb.DeviceFilter;
+import com.serenegiant.widget.VideoFileSizeObserver.OnRerecordListener;
 import com.serenegiant.usb.LogUtil;
 import com.serenegiant.usb.Size;
 import com.serenegiant.usb.USBMonitor;
-import com.serenegiant.usb.USBMonitor.OnDeviceConnectListener;
-import com.serenegiant.usb.USBMonitor.UsbControlBlock;
 import com.serenegiant.usb.UVCCamera;
+import com.serenegiant.usbcameracommon.AbstractUVCCameraHandler;
+import com.serenegiant.usbcameracommon.UVCCameraHandler;
 import com.serenegiant.widget.CameraViewInterface;
 import com.serenegiant.widget.UVCCameraTextureView;
 import java.text.DecimalFormat;
@@ -44,7 +42,7 @@ public class UVCCameraHelper {
     public UVCCameraTextureView mCamView;
     private UVCCameraHandler mCameraHandler;
     /* access modifiers changed from: private */
-    public UsbControlBlock mCtrlBlock;
+    public USBMonitor.UsbControlBlock mCtrlBlock;
     private int mFrameFormat = 1;
     private MediaActionSoundPlayer mMediaActionSoundPlayer;
     private SharedPreferences mPrefs;
@@ -75,7 +73,7 @@ public class UVCCameraHelper {
     }
 
     /* access modifiers changed from: private */
-    public void openCamera(UsbControlBlock usbControlBlock) {
+    public void openCamera(USBMonitor.UsbControlBlock usbControlBlock) {
         LogUtil.d(TAG, "openCamera");
         UVCCameraHandler uVCCameraHandler = this.mCameraHandler;
         if (uVCCameraHandler != null) {
@@ -93,7 +91,7 @@ public class UVCCameraHelper {
         return Integer.parseInt(decimalFormat.format(Math.round(d / 1000000.0d)));
     }
 
-    public void capturePicture(int i) {
+    public void capturePicture(String i) {
         LogUtil.d(TAG, "capturePicture");
         UVCCameraHandler uVCCameraHandler = this.mCameraHandler;
         if (uVCCameraHandler != null && uVCCameraHandler.isOpened()) {
@@ -175,7 +173,7 @@ public class UVCCameraHelper {
         if (uVCCameraHandler == null) {
             return null;
         }
-        ArrayList<Size> arrayList = new ArrayList<>(uVCCameraHandler.getSupportedPreviewSizes());
+        ArrayList<Size> arrayList = new ArrayList<Size>(uVCCameraHandler.getSupportedPreviewSizes());
         LinkedList linkedList = new LinkedList();
         for (Size size : arrayList) {
             double d = (double) size.width;
@@ -233,7 +231,7 @@ public class UVCCameraHelper {
     public void initUSBMonitor(Activity activity, UVCCameraTextureView uVCCameraTextureView, final OnMyDevConnectListener pOnMyDevConnectListener) {
         this.mActivity = activity;
         this.mCamView = uVCCameraTextureView;
-        this.mUSBMonitor = new USBMonitor(activity.getApplicationContext(), new OnDeviceConnectListener() {
+        this.mUSBMonitor = new USBMonitor(activity.getApplicationContext(), new USBMonitor.OnDeviceConnectListener() {
             public void onAttach(UsbDevice usbDevice) {
                 LogUtil.d(UVCCameraHelper.TAG, "onAttach");
                 UVCCameraHelper.this.mUSBDevice = usbDevice;
@@ -248,10 +246,11 @@ public class UVCCameraHelper {
 
             }
 
+
             public void onCancel(UsbDevice usbDevice) {
             }
 
-            public void onConnect(UsbDevice usbDevice, UsbControlBlock usbControlBlock, boolean z) {
+            public void onConnect(UsbDevice usbDevice, USBMonitor.UsbControlBlock usbControlBlock, boolean z) {
                 LogUtil.d(UVCCameraHelper.TAG, "onConnect");
                 UVCCameraHelper.this.mCtrlBlock = usbControlBlock;
                 UVCCameraHelper.this.openCamera(usbControlBlock);
@@ -280,7 +279,7 @@ public class UVCCameraHelper {
                 }
             }
 
-            public void onDisconnect(UsbDevice usbDevice, UsbControlBlock usbControlBlock) {
+            public void onDisconnect(UsbDevice usbDevice, USBMonitor.UsbControlBlock usbControlBlock) {
                 LogUtil.d(UVCCameraHelper.TAG, "onDisconnect");
                 OnMyDevConnectListener onMyDevConnectListener = pOnMyDevConnectListener;
                 if (onMyDevConnectListener != null) {
@@ -395,12 +394,20 @@ public class UVCCameraHelper {
         return 0;
     }
 
-    public void setOnPreviewFrameListener(OnPreViewResultListener onPreViewResultListener) {
+    public void setOnPreviewFrameListener(AbstractUVCCameraHandler.CameraThread.OnPreViewResultListener onPreViewResultListener) {
         UVCCameraHandler uVCCameraHandler = this.mCameraHandler;
         if (uVCCameraHandler != null) {
             uVCCameraHandler.setOnPreViewResultListener(onPreViewResultListener);
         }
     }
+
+    public void setOnScanCompletedListener(AbstractUVCCameraHandler.CameraThread.OnScanCompletedListener onScanCompletedListener) {
+        UVCCameraHandler uVCCameraHandler = this.mCameraHandler;
+        if (uVCCameraHandler != null) {
+            uVCCameraHandler.setOnScanCompletedListener(onScanCompletedListener);
+        }
+    }
+
 
     public void setOnRerecordListener(OnRerecordListener onRerecordListener) {
         UVCCameraHandler uVCCameraHandler = this.mCameraHandler;
@@ -409,12 +416,6 @@ public class UVCCameraHelper {
         }
     }
 
-    public void setOnScanCompletedListener(OnScanCompletedListener onScanCompletedListener) {
-        UVCCameraHandler uVCCameraHandler = this.mCameraHandler;
-        if (uVCCameraHandler != null) {
-            uVCCameraHandler.setOnScanCompletedListener(onScanCompletedListener);
-        }
-    }
 
     public void startPreview(CameraViewInterface cameraViewInterface) {
         LogUtil.d(TAG, "startPreview");
@@ -425,13 +426,13 @@ public class UVCCameraHelper {
         }
     }
 
-    public void startRecording(int i) {
+    public void startRecording(String i) {
         LogUtil.d(TAG, "startRecording");
         if (this.mCameraHandler != null && !isRecording()) {
             if (isCameraSoundOpen()) {
                 this.mMediaActionSoundPlayer.play(1);
             }
-            this.mCameraHandler.startRecording(i);
+            this.mCameraHandler.startRecording();
         }
     }
 

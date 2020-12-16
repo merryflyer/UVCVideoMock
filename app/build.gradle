@@ -45,11 +45,16 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation(name: 'common-2.12.4', ext: 'aar')
+//    implementation(name: 'common-2.12.4', ext: 'aar')
+    implementation("com.serenegiant:common:${commonLibVersion}") {
+        exclude module: 'support-v4'
+    }
+    implementation project(":usbCameraCommon")
+    implementation project(':libuvccamera')
 }
 
-repositories {//添加一个本地仓库
-    flatDir {
-        dirs 'libs'
-    }
-}
+//repositories {//添加一个本地仓库
+//    flatDir {
+//        dirs 'libs'
+//    }
+//}

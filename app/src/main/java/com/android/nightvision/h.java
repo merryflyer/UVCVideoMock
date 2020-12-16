@@ -19,7 +19,7 @@ class h implements Runnable {
         if (i == 1) {
             if (this.f91b.k.isCameraOpened() && this.f91b.k.isPreviewing() && !this.f91b.o()) {
                 this.f91b.r();
-                this.f91b.k.capturePicture(this.f91b.r);
+                this.f91b.k.capturePicture(this.f91b.r_UnKnow);
             }
         } else if (i == 2 && !this.f91b.o()) {
             this.f91b.s();

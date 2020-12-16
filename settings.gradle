@@ -1,2 +1,2 @@
-include ':app'
+include ':app',':usbCameraCommon',":libuvccamera"
 rootProject.name = "UVCVideoMock"
