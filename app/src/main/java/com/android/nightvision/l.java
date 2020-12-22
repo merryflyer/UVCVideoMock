@@ -242,7 +242,7 @@ public class l extends DialogFragment implements OnSeekBarChangeListener, OnClic
             }
             switchR.setChecked(z);
         } else {
-            Constant.a(this.c, R.string.flash_low_battery_warning);
+            Constant.showToast(this.c, R.string.flash_low_battery_warning);
             this.j.setChecked(false);
             this.j.setEnabled(false);
         }

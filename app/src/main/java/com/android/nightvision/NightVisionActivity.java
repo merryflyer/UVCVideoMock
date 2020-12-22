@@ -69,7 +69,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
     /* access modifiers changed from: private */
     public boolean g = true;
     /* access modifiers changed from: private */
-    public boolean h = false;
+    public boolean isFindingDevices = false;
     private boolean i;
     private final Object object = new Object();
     /* access modifiers changed from: private */
@@ -99,7 +99,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
     /* access modifiers changed from: private */
     public boolean z;
 
-    private void removeMessages() {
+    private void pauseAndremoveMessages() {
         this.mHandler.removeMessages(10);
         this.mHandler.removeMessages(9);
         getWindow().clearFlags(128);
@@ -157,7 +157,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
             this.g = true;
         }
         if (this.f > 5) {
-            Constant.a(this, this.h ? R.string.usb_update_resolution_failed :
+            Constant.showToast(this, this.isFindingDevices ? R.string.usb_update_resolution_failed :
                     R.string.usb_device_loading_failed);
             finish();
             return;
@@ -226,7 +226,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
 
     public void onOpen(UVCCamera uVCCamera) {
         if (uVCCamera != null) {
-            PreviewRetry.getInstance().startTimeOut(3000);
+//            PreviewRetry.getInstance().startTimeOut(3000); todo 临时屏蔽 zhaolei
         }
     }
 
@@ -234,13 +234,13 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
         String str = TAG;
         StringBuilder sb = new StringBuilder();
         sb.append("onPreviewResult IsUpdateResolution: ");
-        sb.append(this.h);
+        sb.append(this.isFindingDevices);
         LogUtil.i(str, sb.toString());
         this.f = 0;
         this.g = false;
         PreviewRetry.getInstance().cancelTime();
         this.mUVCCameraHelper.setOnPreviewFrameListener(null);
-        if (!this.h) {
+        if (!this.isFindingDevices) {
             this.mHandler.removeMessages(8);
             this.mHandler.sendEmptyMessage(1);
             this.mProgressDialog.dismiss();
@@ -248,7 +248,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
                 this.mHandler.post(this.E);
             }
         }
-        this.h = false;
+        this.isFindingDevices = false;
     }
 
     public void onRerecord() {
@@ -412,7 +412,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
         this.i = false;
         super.customOnPause();
         PreviewRetry.getInstance().cancelTime();
-        removeMessages();
+        pauseAndremoveMessages();
         this.mHandler.removeCallbacksAndMessages(null);
         this.mUVCCameraHelper.setOnRerecordListener(null);
         synchronized (this.object) {
@@ -450,7 +450,7 @@ public class NightVisionActivity extends PermissionActivity implements OnClickLi
             release();
             sendTimeOutHanlder();
             this.g = true;
-            this.h = false;
+            this.isFindingDevices = false;
             this.x.setVisibility(View.VISIBLE);
             this.mUVCCameraTextureView.onResume();
             this.mThumbnailViewManager.d();

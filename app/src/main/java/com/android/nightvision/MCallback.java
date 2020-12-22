@@ -4,7 +4,6 @@ import android.os.Handler.Callback;
 import android.os.Message;
 import android.view.View;
 
-import com.serenegiant.common.PreviewRetry;
 import com.serenegiant.usb.LogUtil;
 
 /* compiled from: NightVisionActivity */
@@ -29,12 +28,12 @@ class MCallback implements Callback {
                 this.nightVisionActivity.y.setVisibility(View.INVISIBLE);
                 break;
             case 3:
-                if (this.nightVisionActivity.h) {
-                    Constant.a(this.nightVisionActivity, R.string.usb_update_resolution_message);
+                if (this.nightVisionActivity.isFindingDevices) {
+                    Constant.showToast(this.nightVisionActivity, R.string.usb_update_resolution_message);
                     break;
                 } else {
-                    this.nightVisionActivity.h = true;
-                    PreviewRetry.getInstance().startTimeOut(3000);
+                    this.nightVisionActivity.isFindingDevices = true;
+//                    PreviewRetry.getInstance().startTimeOut(3000); todo 临时屏蔽 zhaolei
                     this.nightVisionActivity.mUVCCameraHelper.setOnPreviewFrameListener(this.nightVisionActivity);
                     this.nightVisionActivity.mUVCCameraTextureView.resetFps();
                     this.nightVisionActivity.mUVCCameraTextureView.resetFrame();
@@ -56,7 +55,7 @@ class MCallback implements Callback {
                 sb.append("finish msg.what = ");
                 sb.append(message.what);
                 LogUtil.i(l, sb.toString());
-                Constant.a(this.nightVisionActivity, R.string.usb_device_disconnect);
+                Constant.showToast(this.nightVisionActivity, R.string.usb_device_disconnect);
                 this.nightVisionActivity.finish();
                 break;
             case 7:
@@ -64,7 +63,7 @@ class MCallback implements Callback {
                 this.nightVisionActivity.s();
                 break;
             case 8:
-                Constant.a(this.nightVisionActivity, R.string.usb_device_loading_failed);
+                Constant.showToast(this.nightVisionActivity, R.string.usb_device_loading_failed);
                 this.nightVisionActivity.finish();
                 break;
             case 9:

@@ -139,6 +139,7 @@ public class UVCCameraHelper {
             this.mCamView.setPictureSize(this.previewWidth, this.previewHeight);
             this.mCamView.setAspectRatio((double) (((float) this.previewWidth) / ((float) this.previewHeight)));
             this.mCameraHandler = UVCCameraHandler.createHandler(this.mActivity, this.mCamView, 2, this.previewWidth, this.previewHeight, this.mFrameFormat);
+            LogUtil.d(TAG, "createUVCCamera success");
             return;
         }
         throw new NullPointerException("CameraViewInterface cannot be null!");

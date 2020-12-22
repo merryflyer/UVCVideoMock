@@ -15,13 +15,13 @@ public class Constant {
     public static String f93b = "NightVision";
     public static String c = "night_vision_detach";
 
-    public static void a(Context context, String i) {
+    public static void showToast(Context context, String i) {
         Toast makeText = Toast.makeText(context, i, Toast.LENGTH_SHORT);
         makeText.setGravity(80, 0, 0);
         makeText.show();
     }
 
-    public static void a(Context context, int i) {
+    public static void showToast(Context context, int i) {
         Toast makeText = Toast.makeText(context, i, Toast.LENGTH_SHORT);
         makeText.setGravity(80, 0, 0);
         makeText.show();

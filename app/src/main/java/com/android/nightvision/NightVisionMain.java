@@ -58,7 +58,7 @@ public class NightVisionMain extends Activity {
             }
             startActivity(intent);
         } else {
-            Constant.a(this, "没有USB 设备链接");
+            Constant.showToast(this, "没有USB 设备链接");
         }
         finish();
     }

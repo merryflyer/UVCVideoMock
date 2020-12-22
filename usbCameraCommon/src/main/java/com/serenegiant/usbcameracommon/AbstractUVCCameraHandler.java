@@ -1028,6 +1028,7 @@ public abstract class AbstractUVCCameraHandler extends Handler {
 		}
 
 		private void callOnError(final Exception e) {
+			e.printStackTrace();
 			for (final CameraCallback callback: mCallbacks) {
 				try {
 					callback.onError(e);
