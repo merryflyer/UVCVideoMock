@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <LinearLayout
+        android:id="@+id/camera_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.serenegiant.widget.UVCCameraTextureView
+            android:id="@+id/camera_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/capture_animator_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/camera_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@android:color/black"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:src="@drawable/ic_appicon" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recording_time_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="20dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_recording_indicator" />
+
+        <Chronometer
+            android:id="@+id/recording_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:format="%s"
+            android:textColor="@color/red"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/camera_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:id="@+id/thumbnail_container"
+            android:layout_width="@dimen/button_size"
+            android:layout_height="@dimen/button_size">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="@dimen/button_size"
+                android:layout_height="@dimen/button_size"
+                android:scaleType="center" />
+
+            <ImageView
+                android:id="@+id/thumbnail_animation"
+                android:layout_width="@dimen/button_size"
+                android:layout_height="@dimen/button_size"
+                android:layout_alignLeft="@+id/thumbnail"
+                android:layout_alignTop="@+id/thumbnail"
+                android:clickable="false"
+                android:focusable="false"
+                android:scaleType="center"
+                android:visibility="invisible" />
+        </RelativeLayout>
+
+        <ImageButton
+            android:id="@+id/capture_button"
+            android:layout_width="@dimen/button_size"
+            android:layout_height="@dimen/button_size"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_action_snapshot" />
+
+        <ImageButton
+            android:id="@+id/recording_button"
+            android:layout_width="@dimen/button_size"
+            android:layout_height="@dimen/button_size"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_action_record_pause" />
+
+        <ImageButton
+            android:id="@+id/settings_button"
+            android:layout_width="@dimen/button_size"
+            android:layout_height="@dimen/button_size"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_action_settings" />
+    </LinearLayout>
+</FrameLayout>
